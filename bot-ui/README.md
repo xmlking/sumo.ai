@@ -3,7 +3,9 @@ BOT UI
 
 Simple Bot UI
 
-[![ChatBot Live Demo](./screenshot.png)](https://xmlking.github.io/botui/index.html)
+> Click on image to see **Demo**
+
+[![ChatBot Live Demo](./screenshot.png)](https://xmlking.github.io/sumo.ai/bot-ui/)
 
 ### Setup
 ```bash
