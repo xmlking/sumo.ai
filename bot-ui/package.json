@@ -1,0 +1,28 @@
+{
+  "name": "bot-ui",
+  "version": "1.0.0",
+  "private": true,
+  "description": "BOT UI",
+  "style": "dist/css/style.css",
+  "sass": "src/scss/style.scss",
+  "main": "dist/script.js",
+  "dependencies": {
+    "bootstrap": "^4.0.0-beta.2",
+    "bootstrap-material-design": "^4.0.0-beta.4",
+    "cssnano-cli": "^1.0.5",
+    "express": "^4.15.2",
+    "jquery": "^3.2.1",
+    "node-sass": "^4.5.3",
+    "node-sass-tilde-importer": "^1.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "build:js": "cp -R src/js/ dist/js",
+    "build:css": "node-sass --importer=node_modules/node-sass-tilde-importer src/scss/style.scss  dist/css/style.css",
+    "build:css-min": "cssnano dist/css/style.css dist/css/style.min.css",
+    "build": "npm run build:js && npm run build:css && npm run build:css-min",
+    "start": "npm run build && node index.js"
+  },
+  "author": "Sumanth Chinthagunta",
+  "license": "MIT"
+}
