@@ -1,8 +1,35 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title><%= htmlWebpackPlugin.options.title %></title>
+    <meta name="description" content="<%= htmlWebpackPlugin.options.title %>">
+
+    <style>
+        html, body {
+            background: #efefef;
+            height: 100%;
+        }
+
+        #center-text {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+
+        }
+    </style>
+</head>
+
+<body>
+
 <div id="center-text">
     <h2>ChatBox UI</h2>
     <p>Message send and scroll to bottom enabled </p>
 </div>
-<div id="body">
+
+<div id="botui">
 
     <div id="chat-circle" class="btn btn-raised">
         <div id="chat-overlay"></div>
@@ -25,11 +52,12 @@
             <form>
                 <input type="text" id="chat-input" placeholder="Send a message..."/>
                 <button type="submit" class="chat-submit" id="chat-submit"><i class="material-icons">send</i></button>
+                <button class="chat-voice-submit" id="chat-voice-submit"><i class="material-icons">keyboard_voice</i></button>
             </form>
         </div>
     </div>
 
-
-
-
 </div>
+
+</body>
+</html>

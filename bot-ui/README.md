@@ -10,26 +10,30 @@ Simple Bot UI
 ### Setup
 ```bash
 cd bot-ui
-mkdir dist
-npm install
+npm i
 ```
 
 ### Build
 ```bash
 cd bot-ui
+# clean dist
+npm run clean
+# dev build
 npm run build
+# prod build
+npm run build:prod
 ```
 
 ### Run
 ```bash
 cd bot-ui
 npm start
-Browse to http://localhost:8085/
+Browse to http://localhost:3000/
 ```
 
 ### Integration
 
-copy `dist/css` and `dist/js` to host project and integrate UI Widget into target html page.
+copy `dist/*` to host project and integrate UI Widget into target html page.
 
 ### Test
 open `index.html` file in `IntelliJ` and click chrome icon in the top right corner.
