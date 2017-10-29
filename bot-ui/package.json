@@ -7,6 +7,7 @@
   "sass": "src/scss/style.scss",
   "main": "dist/script.js",
   "dependencies": {
+    "api-ai-javascript": "^2.0.0-beta.21",
     "bootstrap": "^4.0.0-beta.2",
     "bootstrap-material-design": "^4.0.0-beta.4",
     "jquery": "^3.2.1"

@@ -49,7 +49,7 @@ export function synthesisVoice(text: string): void {
 
 export function startListening(): Promise<string> {
 
-    return new Promise((resolve, reject): void => {
+    return new Promise((resolve: any, reject: any): void => {
         recognition.start();
 
         recognition.addEventListener('speechstart', () => {

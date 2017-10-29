@@ -37,6 +37,7 @@ var config = {
                 test: /\.ts$/,
                 enforce: 'pre',
                 loader: 'tslint-loader',
+                exclude: [/\.(spec|e2e)\.ts$/, /node_modules/],
                 options: {
                     emitErrors: false,
                     failOnHint: false

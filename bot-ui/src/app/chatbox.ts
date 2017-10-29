@@ -1,9 +1,11 @@
 import * as $ from "jquery";
+import {IRequestOptions, IServerResponse, ApiAiConstants} from "api-ai-javascript";
 import {environment} from "./environment";
 import {startListening, synthesisVoice} from "./voice";
 
 const chatLogs: JQuery = $(".chat-logs");
 let INDEX = 0;
+const client = environment.apiAiClient;
 
 $("#chat-submit").click( (e: JQuery.Event) => {
     console.log("in chat-submit");
@@ -12,26 +14,38 @@ $("#chat-submit").click( (e: JQuery.Event) => {
     if (msg.trim() === '') {
         return false;
     }
+
     generate_message(msg, 'self');
 
-    setTimeout( () => {
-        generate_message(msg, 'user');
-    }, 1000);
-
+    client.textRequest(msg)
+        .then((response: any) => {
+            const { result: { fulfillment: { speech } } } = response;
+            generate_message(speech, 'user');
+        })
+        .catch((err: Error) => {
+            console.log(err);
+        });
 });
 
 $("#chat-voice-submit").click( (e: JQuery.Event) => {
     console.log("chat-voice-submit");
     e.preventDefault();
-    startListening().then( (msg) => {
+    startListening().then( (msg: string) => {
+
         generate_message(msg, 'self');
-        setTimeout( () => {
-            generate_message(msg, 'user');
-            synthesisVoice(msg);
-        }, 1000);
-    }).catch( (error) => {
+
+        client.textRequest(msg)
+            .then((response: any) => {
+                const { result: { fulfillment: { speech } } } = response;
+                generate_message(speech, 'user');
+                synthesisVoice(speech);
+            })
+            .catch((err: Error) => {
+                console.log(err);
+            });
+    }).catch( (error: string) => {
         generate_message(error, 'user');
-    })
+    });
 });
 
 export function generate_message(msg: string, type: string): void {
@@ -72,4 +86,3 @@ $(".chat-box-toggle").click( () => {
     $("#chat-circle").toggle('slow'); //.toggle('scale');
     $(".chat-box").toggle('slow'); //.toggle('scale');
 });
-
