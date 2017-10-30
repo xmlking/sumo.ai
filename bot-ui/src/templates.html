@@ -1,0 +1,44 @@
+<script id="botui-template" type="text/template">
+    <div id="chat-circle" class="btn btn-raised">
+        <div id="chat-overlay"></div>
+        <i class="material-icons">speaker_phone</i>
+    </div>
+
+    <div class="chat-box">
+        <div class="chat-box-header">
+            ChatBot
+            <span class="chat-box-toggle"><i class="material-icons">close</i></span>
+        </div>
+        <div class="chat-box-body">
+            <div class="chat-box-overlay">
+            </div>
+            <div class="chat-logs">
+
+            </div><!--chat-log -->
+        </div>
+        <div class="chat-input">
+            <form>
+                <input type="text" id="chat-input" placeholder="Send a message..."/>
+                <button type="submit" class="chat-submit" id="chat-submit"><i class="material-icons">send</i></button>
+                <button class="chat-voice-submit" id="chat-voice-submit"><i class="material-icons">keyboard_voice</i>
+                </button>
+            </form>
+        </div>
+    </div>
+</script>
+<script id="bot-template" type="text/template">
+    <div id="cm-msg-{{id}}" class="chat-msg user" style="">
+        <span class="msg-avatar">
+            <img src="https://image.winudf.com/v2/image/Y29tLm1la3VudS5kb3dubG9hZGJvdF9pY29uXzBfYzM0ODg5MTQ/icon.png?w=170&amp;fakeurl=1&amp;type=.png">
+        </span>
+        <div class="cm-msg-text">{{message}}</div>
+    </div>
+</script>
+<script id="user-template" type="text/template">
+    <div id="cm-msg1-{{id}}" class="chat-msg self" style="">
+        <span class="msg-avatar">
+            <img src="https://image.crisp.im/avatar/operator/196af8cc-f6ad-4ef7-afd1-c45d5231387c/240/?1483361727745">
+        </span>
+        <div class="cm-msg-text">{{message}}</div>
+    </div>
+</script>

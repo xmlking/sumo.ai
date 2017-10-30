@@ -5,8 +5,8 @@ http://www.bootstrapzero.com
 
 */
 
-@import url(https://fonts.googleapis.com/css?family=Questrial);
-@import url(http://fonts.googleapis.com/css?family=Dancing+Script:700);
+@import url(//fonts.googleapis.com/css?family=Questrial);
+@import url(//fonts.googleapis.com/css?family=Dancing+Script:700);
 
 html,
 body {
@@ -263,11 +263,11 @@ header .header-content .inner p {
 
 #video-background {
   position: absolute;
-  right: 0; 
+  right: 0;
   bottom: 0;
-  min-width: 100%; 
+  min-width: 100%;
   min-height: 100%;
-  width: auto; 
+  width: auto;
   height: auto;
   z-index: 1;
 }
@@ -284,7 +284,7 @@ footer {
     .icon-lg {
         font-size: 80px;
     }
-    
+
     header {
         min-height: 100%;
     }
@@ -314,7 +314,7 @@ footer {
         max-width: 80%;
         font-size: 18px;
     }
-    
+
     section {
         min-height: 600px;
         padding: 100px 0;

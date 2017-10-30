@@ -1,5 +1,6 @@
 webpackJsonp([0],[
-/* 0 */
+/* 0 */,
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12,14 +13,13 @@ exports.environment = {
     API_BASE_URL: 'http://localhost:3000/api',
     AI_BASE_URL: 'http://localhost:8080',
     WS_BASE_URL: 'http://localhost:8090',
-    // API_AI_ACCESS_TOKEN: '37808bf14a19406cbe2a50cfd1332dd3',
-    API_AI_ACCESS_TOKEN: 'a2092111952c4413ae0f3af5fea5f884',
+    API_AI_ACCESS_TOKEN: '37808bf14a19406cbe2a50cfd1332dd3',
+    // API_AI_ACCESS_TOKEN: 'a2092111952c4413ae0f3af5fea5f884',
     API_AI_SESSION_ID: 'sumodemo',
 };
 
 
 /***/ }),
-/* 1 */,
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -114,7 +114,7 @@ exports.ApiAiRequestError = ApiAiRequestError;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = __webpack_require__(3);
-var XhrRequest_1 = __webpack_require__(13);
+var XhrRequest_1 = __webpack_require__(12);
 var Request = /** @class */ (function () {
     function Request(apiAiClient, options) {
         this.apiAiClient = apiAiClient;
@@ -165,188 +165,133 @@ exports.default = Request;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var outputYou = document.querySelector('.output-you');
-var outputBot = document.querySelector('.output-bot');
-var voiceBtn = document.querySelector('.chat-input .chat-voice-submit');
-var SpeechRecognition = window.webkitSpeechRecognition ||
-    window.mozSpeechRecognition ||
-    window.msSpeechRecognition ||
-    window.oSpeechRecognition ||
-    window.SpeechRecognition;
-var recognition;
-if (SpeechRecognition === undefined) {
-    voiceBtn.style.display = "none";
-}
-else {
-    voiceBtn.style.display = "";
-    recognition = new SpeechRecognition();
-    recognition.continuous = false;
-    recognition.lang = 'en-US';
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-}
-var synth = window.speechSynthesis;
-var voices;
-var selectedVoice;
-if (synth !== undefined || synth.onvoiceschanged !== undefined) {
-    synth.onvoiceschanged = function (ev) {
-        voices = synth.getVoices();
-        selectedVoice = voices[48];
-        console.log(voices);
-        console.log(selectedVoice);
-    };
-}
-function synthesisVoice(text) {
-    var utterance = new SpeechSynthesisUtterance(text);
-    utterance.voice = selectedVoice;
-    utterance.text = text;
-    // utterance.pitch =
-    // utterance.rate =
-    synth.speak(utterance);
-}
-exports.synthesisVoice = synthesisVoice;
-function startListening() {
-    return new Promise(function (resolve, reject) {
-        recognition.start();
-        recognition.addEventListener('speechstart', function () {
-            console.log('Speech has been detected.');
-        });
-        recognition.addEventListener('result', function (e) {
-            console.log('Result has been detected.');
-            var last = e.results.length - 1;
-            var text = e.results[last][0].transcript;
-            //outputYou.textContent = text;
-            console.log('Result: ' + text);
-            console.log('Confidence: ' + e.results[0][0].confidence);
-            //generate_message(text, 'self');
-            resolve(text);
-        });
-        recognition.addEventListener('speechend', function (ev) {
-            recognition.stop();
-        });
-        recognition.addEventListener('error', function (error) {
-            //outputBot.textContent = 'Error: ' + e.error;
-            console.log('Error: ' + error.error);
-            reject(error);
-        });
-    });
-}
-exports.startListening = startListening;
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var environment_1 = __webpack_require__(0);
-__webpack_require__(7);
-__webpack_require__(5);
+var $ = __webpack_require__(0);
+var environment_1 = __webpack_require__(1);
+var chatbox_component_1 = __webpack_require__(8);
+var voice_service_1 = __webpack_require__(15);
 __webpack_require__(16);
+var chatboxTpl = __webpack_require__(21);
 var Main = /** @class */ (function () {
     function Main() {
         console.log("Typescript Webpack starter launched " + environment_1.environment.TITLE);
+        $("body").append($(chatboxTpl));
+        var template = $("#botui-template").html();
+        $("#botui").append(template);
+        var voiceService = new voice_service_1.VoiceService();
+        var chatboxComponent = new chatbox_component_1.ChatboxComponent(voiceService);
     }
     return Main;
 }());
 exports.default = Main;
-var start = new Main();
+$(function () {
+    var start = new Main();
+});
 
 
 /***/ }),
-/* 7 */
+/* 6 */,
+/* 7 */,
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var $ = __webpack_require__(1);
-var api_ai_javascript_1 = __webpack_require__(10);
-var environment_1 = __webpack_require__(0);
-var voice_1 = __webpack_require__(5);
-var chatLogs = $(".chat-logs");
-var INDEX = 0;
-var client = new api_ai_javascript_1.ApiAiClient({ accessToken: environment_1.environment.API_AI_ACCESS_TOKEN, sessionId: environment_1.environment.API_AI_SESSION_ID });
-$("#chat-submit").click(function (e) {
-    console.log("in chat-submit");
-    e.preventDefault();
-    var msg = $("#chat-input").val().toString();
-    if (msg.trim() === '') {
-        return false;
-    }
-    generate_message(msg, 'self');
-    client.textRequest(msg)
-        .then(function (response) {
-        var speech = response.result.fulfillment.speech;
-        generate_message(speech, 'user');
-    })
-        .catch(function (err) {
-        console.log(err);
-    });
-});
-$("#chat-voice-submit").click(function (e) {
-    console.log("chat-voice-submit");
-    e.preventDefault();
-    voice_1.startListening().then(function (msg) {
-        generate_message(msg, 'self');
-        client.textRequest(msg)
-            .then(function (response) {
-            var speech = response.result.fulfillment.speech;
-            generate_message(speech, 'user');
-            voice_1.synthesisVoice(speech);
-        })
-            .catch(function (err) {
-            console.log(err);
+var $ = __webpack_require__(0);
+var api_ai_javascript_1 = __webpack_require__(9);
+var environment_1 = __webpack_require__(1);
+var ChatboxComponent = /** @class */ (function () {
+    function ChatboxComponent(voiceService) {
+        var _this = this;
+        this.voiceBtn = document.querySelector('.chat-input .chat-voice-submit');
+        this.chatLogs = $(".chat-logs");
+        this.INDEX = 0;
+        this.client = new api_ai_javascript_1.ApiAiClient({ accessToken: environment_1.environment.API_AI_ACCESS_TOKEN, sessionId: environment_1.environment.API_AI_SESSION_ID });
+        if (voiceService.canUseSpeechRecognition) {
+            this.voiceBtn.style.display = "";
+        }
+        else {
+            this.voiceBtn.style.display = "none";
+        }
+        $("#chat-submit").click(function (e) {
+            e.preventDefault();
+            var msg = $("#chat-input").val().toString();
+            if (msg.trim() === '') {
+                return false;
+            }
+            _this.generate_message(msg, 'self');
+            _this.client.textRequest(msg)
+                .then(function (response) {
+                var speech = response.result.fulfillment.speech;
+                _this.generate_message(speech, 'user');
+            })
+                .catch(function (err) {
+                console.log(err);
+            });
         });
-    }).catch(function (error) {
-        generate_message(error, 'user');
-    });
-});
-function generate_message(msg, type) {
-    INDEX++;
-    var str = "";
-    str += "<div id='cm-msg-" + INDEX + "' class=\"chat-msg " + type + "\">";
-    str += "<span class=\"msg-avatar\">";
-    if (type === 'self') {
-        str += "            <img src=\"https:\/\/image.crisp.im\/avatar\/operator" +
-            "\/196af8cc-f6ad-4ef7-afd1-c45d5231387c\/240\/?1483361727745\">";
+        $("#chat-voice-submit").click(function (e) {
+            e.preventDefault();
+            voiceService.startListening().then(function (msg) {
+                _this.generate_message(msg, 'self');
+                _this.client.textRequest(msg)
+                    .then(function (response) {
+                    var speech = response.result.fulfillment.speech;
+                    _this.generate_message(speech, 'user');
+                    voiceService.synthesisVoice(speech);
+                })
+                    .catch(function (err) {
+                    console.log(err);
+                });
+            }).catch(function (error) {
+                _this.generate_message(error, 'user');
+            });
+        });
+        $("#chat-circle").click(function () {
+            $("#chat-circle").toggle('slow'); //.toggle('scale');
+            $(".chat-box").toggle('slow'); //.toggle('scale');
+            setTimeout(function () {
+                _this.generate_message('How can i help you?', 'user');
+            }, 1000);
+        });
+        $(".chat-box-toggle").click(function () {
+            $("#chat-circle").toggle('slow'); //.toggle('scale');
+            $(".chat-box").toggle('slow'); //.toggle('scale');
+        });
+        var template = $("#bot-template").html(); //TODO: do interpolate?
+        console.log(template);
     }
-    else {
-        str += "            <img src=\"https:\/\/image.winudf.com\/v2\/image" +
-            "\/Y29tLm1la3VudS5kb3dubG9hZGJvdF9pY29uXzBfYzM0ODg5MTQ\/icon.png?w=170&fakeurl=1&type=.png\">";
-    }
-    str += "          <\/span>";
-    str += "          <div class=\"cm-msg-text\">";
-    str += msg;
-    str += "          <\/div>";
-    str += "        <\/div>";
-    chatLogs.append(str);
-    $("#cm-msg-" + INDEX).hide().fadeIn(300);
-    if (type === 'self') {
-        $("#chat-input").val('');
-    }
-    chatLogs.stop().animate({ scrollTop: chatLogs[0].scrollHeight }, 1000);
-}
-exports.generate_message = generate_message;
-$("#chat-circle").click(function () {
-    $("#chat-circle").toggle('slow'); //.toggle('scale');
-    $(".chat-box").toggle('slow'); //.toggle('scale');
-    setTimeout(function () {
-        generate_message('How can i help you?', 'user');
-    }, 1000);
-});
-$(".chat-box-toggle").click(function () {
-    $("#chat-circle").toggle('slow'); //.toggle('scale');
-    $(".chat-box").toggle('slow'); //.toggle('scale');
-});
+    ChatboxComponent.prototype.generate_message = function (msg, type) {
+        this.INDEX++;
+        var str = "";
+        str += "<div id='cm-msg-" + this.INDEX + "' class=\"chat-msg " + type + "\">";
+        str += "<span class=\"msg-avatar\">";
+        if (type === 'self') {
+            str += "            <img src=\"https:\/\/image.crisp.im\/avatar\/operator" +
+                "\/196af8cc-f6ad-4ef7-afd1-c45d5231387c\/240\/?1483361727745\">";
+        }
+        else {
+            str += "            <img src=\"https:\/\/image.winudf.com\/v2\/image" +
+                "\/Y29tLm1la3VudS5kb3dubG9hZGJvdF9pY29uXzBfYzM0ODg5MTQ\/icon.png?w=170&fakeurl=1&type=.png\">";
+        }
+        str += "          <\/span>";
+        str += "          <div class=\"cm-msg-text\">";
+        str += msg;
+        str += "          <\/div>";
+        str += "        <\/div>";
+        this.chatLogs.append(str);
+        $("#cm-msg-" + this.INDEX).hide().fadeIn(300);
+        if (type === 'self') {
+            $("#chat-input").val('');
+        }
+        this.chatLogs.stop().animate({ scrollTop: this.chatLogs[0].scrollHeight }, 1000);
+    };
+    return ChatboxComponent;
+}());
+exports.ChatboxComponent = ChatboxComponent;
 
 
 /***/ }),
-/* 8 */,
-/* 9 */,
-/* 10 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -356,11 +301,11 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 /// <reference path="declarations.d.ts"/>
-__export(__webpack_require__(11));
+__export(__webpack_require__(10));
 
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -371,9 +316,9 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var ApiAiConstants_1 = __webpack_require__(2);
 var Errors_1 = __webpack_require__(3);
-var EventRequest_1 = __webpack_require__(12);
-var TextRequest_1 = __webpack_require__(14);
-__export(__webpack_require__(15));
+var EventRequest_1 = __webpack_require__(11);
+var TextRequest_1 = __webpack_require__(13);
+__export(__webpack_require__(14));
 var ApiAiConstants_2 = __webpack_require__(2);
 exports.ApiAiConstants = ApiAiConstants_2.ApiAiConstants;
 var ApiAiClient = /** @class */ (function () {
@@ -447,7 +392,7 @@ exports.ApiAiClient = ApiAiClient;
 
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -475,7 +420,7 @@ exports.EventRequest = EventRequest;
 
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -613,7 +558,7 @@ exports.default = XhrRequest;
 
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -641,7 +586,7 @@ exports.default = TextRequest;
 
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -672,6 +617,104 @@ var IStreamClient;
         EVENT[EVENT["MSG_CONFIG_CHANGED"] = 11] = "MSG_CONFIG_CHANGED";
     })(EVENT = IStreamClient.EVENT || (IStreamClient.EVENT = {}));
 })(IStreamClient = exports.IStreamClient || (exports.IStreamClient = {}));
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var SpeechRecognition = window.webkitSpeechRecognition || window.mozSpeechRecognition ||
+    window.msSpeechRecognition || window.oSpeechRecognition || window.SpeechRecognition;
+var SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList;
+var SpeechRecognitionEvent = window.SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent;
+var VoiceService = /** @class */ (function () {
+    function VoiceService() {
+        var _this = this;
+        this.canUseSpeechRecognition = false;
+        this.canUseSpeechSynthesis = false;
+        if (SpeechRecognition !== undefined) {
+            this.canUseSpeechRecognition = true;
+            this.recognition = new SpeechRecognition();
+            this.recognition.continuous = false; //FIXME: Gecko?
+            this.recognition.lang = 'en-US';
+            this.recognition.interimResults = false;
+            this.recognition.maxAlternatives = 1;
+            //recognition.grammars = new SpeechGrammarList();
+        }
+        if ('speechSynthesis' in window) {
+            this.canUseSpeechSynthesis = true;
+            this.synth = window.speechSynthesis;
+            console.log(this.synth);
+            // With Chrome, we have to wait for the event to fire before populateVoiceList
+            if (this.synth.onvoiceschanged !== undefined) {
+                this.synth.onvoiceschanged = function () { _this.populateVoiceList(); };
+            }
+            else {
+                this.populateVoiceList();
+            }
+        }
+    }
+    VoiceService.prototype.startListening = function () {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            _this.recognition.start();
+            _this.recognition.onresult = function (e) {
+                console.log('Result has been detected.');
+                var last = e.results.length - 1;
+                var text = e.results[last][0].transcript;
+                console.log('Result: ' + text);
+                console.log('Confidence: ' + e.results[0][0].confidence);
+                resolve(text);
+            };
+            _this.recognition.onspeechend = function (ev) {
+                _this.recognition.stop();
+            };
+            _this.recognition.onnomatch = function (err) {
+                console.log('No Match');
+                reject("I didn't recognise your question.");
+            };
+            _this.recognition.onerror = function (err) {
+                console.log('Error: ' + err.error);
+                reject(err.error);
+            };
+            // [
+            //     'onaudiostart',
+            //     'onaudioend',
+            //     'onend',
+            //     'onerror',
+            //     'onnomatch',
+            //     'onresult',
+            //     'onsoundstart',
+            //     'onsoundend',
+            //     'onspeechend',
+            //     'onstart',
+            // ].forEach((eventName: string): void  => {
+            //     this.recognition[eventName] = (e: Event): void => {
+            //         console.log(eventName, e);
+            //     };
+            // });
+        });
+    };
+    VoiceService.prototype.synthesisVoice = function (text) {
+        var utterance = new SpeechSynthesisUtterance(text);
+        utterance.voice = this.selectedVoice;
+        utterance.text = text;
+        // utterance.pitch =
+        // utterance.rate =
+        this.synth.speak(utterance);
+    };
+    VoiceService.prototype.populateVoiceList = function () {
+        this.voices = this.synth.getVoices();
+        this.selectedVoice = this.voices[48];
+        console.log(this.voices);
+        console.log(this.selectedVoice);
+    };
+    return VoiceService;
+}());
+exports.VoiceService = VoiceService;
 
 
 /***/ }),
@@ -1269,5 +1312,11 @@ module.exports = function (css) {
 };
 
 
+/***/ }),
+/* 21 */
+/***/ (function(module, exports) {
+
+module.exports = "<script id=botui-template type=text/template>\n    <div id=\"chat-circle\" class=\"btn btn-raised\">\n        <div id=\"chat-overlay\"></div>\n        <i class=\"material-icons\">speaker_phone</i>\n    </div>\n\n    <div class=\"chat-box\">\n        <div class=\"chat-box-header\">\n            ChatBot\n            <span class=\"chat-box-toggle\"><i class=\"material-icons\">close</i></span>\n        </div>\n        <div class=\"chat-box-body\">\n            <div class=\"chat-box-overlay\">\n            </div>\n            <div class=\"chat-logs\">\n\n            </div><!--chat-log -->\n        </div>\n        <div class=\"chat-input\">\n            <form>\n                <input type=\"text\" id=\"chat-input\" placeholder=\"Send a message...\"/>\n                <button type=\"submit\" class=\"chat-submit\" id=\"chat-submit\"><i class=\"material-icons\">send</i></button>\n                <button class=\"chat-voice-submit\" id=\"chat-voice-submit\"><i class=\"material-icons\">keyboard_voice</i>\n                </button>\n            </form>\n        </div>\n    </div>\n</script>\n<script id=bot-template type=text/template>\n    <div id=\"cm-msg-{{id}}\" class=\"chat-msg user\" style=\"\">\n        <span class=\"msg-avatar\">\n            <img src=\"https://image.winudf.com/v2/image/Y29tLm1la3VudS5kb3dubG9hZGJvdF9pY29uXzBfYzM0ODg5MTQ/icon.png?w=170&amp;fakeurl=1&amp;type=.png\">\n        </span>\n        <div class=\"cm-msg-text\">{{message}}</div>\n    </div>\n</script>\n<script id=user-template type=text/template>\n    <div id=\"cm-msg1-{{id}}\" class=\"chat-msg self\" style=\"\">\n        <span class=\"msg-avatar\">\n            <img src=\"https://image.crisp.im/avatar/operator/196af8cc-f6ad-4ef7-afd1-c45d5231387c/240/?1483361727745\">\n        </span>\n        <div class=\"cm-msg-text\">{{message}}</div>\n    </div>\n</script>\n";
+
 /***/ })
-],[6]);
+],[5]);
