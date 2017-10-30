@@ -13,7 +13,8 @@ exports.environment = {
     API_BASE_URL: 'http://localhost:3000/api',
     AI_BASE_URL: 'http://localhost:8080',
     WS_BASE_URL: 'http://localhost:8090',
-    apiAiClient: new api_ai_javascript_1.ApiAiClient({ accessToken: '37808bf14a19406cbe2a50cfd1332dd3', sessionId: 'sumodemo' }),
+    //apiAiClient:  new ApiAiClient({ accessToken: '37808bf14a19406cbe2a50cfd1332dd3', sessionId: 'sumodemo' }),
+    apiAiClient: new api_ai_javascript_1.ApiAiClient({ accessToken: 'a2092111952c4413ae0f3af5fea5f884', sessionId: 'sumodemo' }),
 };
 
 
